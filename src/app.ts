@@ -80,7 +80,8 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
   });
 }
 
-function prepareLineFlexResponse(fbDataList: Datum[]): LineFlexMessage {
+function prepareLineFlexResponse(fbDataList: any[]): LineFlexMessage {
+  console.log(fbDataList);
   const responseFlex = new LineFlexMessage();
   responseFlex.type = 'flex';
   responseFlex.altText = 'Flex Message';
