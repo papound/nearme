@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.post('/webhook', (req, res) => {
   const reply_token = req.body.events[0].replyToken;
   const msg: LineLocationBody = req.body;
-  reply(reply_token, msg);
+  getNearbyFacebookEvents(reply_token, msg);
   res.sendStatus(200);
 });
 function reply(reply_token: string, msg: any) {
@@ -55,7 +55,7 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
     if (err) {
       return console.log(err);
     }
-    console.log(body);
+    // console.log(body);
     reply(replyToken, body);
   });
 }
