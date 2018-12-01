@@ -4,7 +4,6 @@ import { Client } from 'pg';
 import request from 'request';
 import { URL } from 'url';
 import { LineLocationBody } from './models/LineLocationBody';
-const port = process.env.PORT || 4000;
 
 const { DATABASE_URL } = process.env;
 const app = express();
@@ -17,7 +16,6 @@ app.post('/webhook', (req, res) => {
   reply(reply_token, msg);
   res.sendStatus(200);
 });
-app.listen(port);
 function reply(reply_token: string, msg: any) {
   const headers = {
     'Content-Type': 'application/json',
