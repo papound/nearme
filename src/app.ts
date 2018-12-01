@@ -12,7 +12,8 @@ app.use(bodyParser.json());
 
 app.post('/webhook', (req, res) => {
   const reply_token = req.body.events[0].replyToken;
-  const msg: LineLocationBody = req.body;
+  const msg = req.body;
+  console.log("msg", msg);
   getNearbyFacebookEvents(reply_token, msg);
   res.sendStatus(200);
 });
