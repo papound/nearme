@@ -70,11 +70,11 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
     if (err) {
       return console.log(err);
     }
-    // console.log(res.body.data[0]);
+    console.log(res.body.data[0]);
     // reply(replyToken, res.body.data[0]);
-    let lineFlexResponse = new LineFlexMessage();
-    lineFlexResponse = prepareLineFlexResponse(res.body.data);
-    reply(replyToken, lineFlexResponse);
+    // let lineFlexResponse = new LineFlexMessage();
+    // lineFlexResponse = prepareLineFlexResponse(res.body.data);
+    // reply(replyToken, lineFlexResponse);
   });
 }
 
@@ -99,7 +99,7 @@ function prepareLineFlexContents(fbData: Datum): LineFlexContents {
   lineFlexContents.hero = prepareLineFlexHero(fbData);
   lineFlexContents.body = prepareLineFlexBody(fbData);
   lineFlexContents.footer = prepareLineFlexFooter(fbData);
-  return null;
+  return lineFlexContents;
 }
 
 function prepareLineFlexHeader(fbData: Datum): LineFlexHeader {
