@@ -80,8 +80,8 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
   });
 }
 
-function prepareLineFlexResponse(fbDataList: any[]): LineFlexMessage {
-  console.log(fbDataList);
+function prepareLineFlexResponse(fbDataList: Datum[]): LineFlexMessage {
+  // console.log(fbDataList);
   const responseFlex = new LineFlexMessage();
   responseFlex.type = 'flex';
   responseFlex.altText = 'Flex Message';
@@ -89,6 +89,7 @@ function prepareLineFlexResponse(fbDataList: any[]): LineFlexMessage {
   responseFlex.contents.type = 'carousel';
   responseFlex.contents.contents = [];
   fbDataList.forEach(fbData => {
+    console.log(fbData);
     const mainContents = prepareLineFlexContents(fbData);
     responseFlex.contents.contents.push(mainContents);
   });
@@ -110,7 +111,7 @@ function prepareLineFlexHeader(fbData: Datum): LineFlexHeader {
   lineFlexHeader.type = 'box';
   lineFlexHeader.layout = 'vertical';
   lineFlexHeader.flex = 0;
-  lineFlexHeader.contents = prepareLineFlexInnerContents('header');
+  lineFlexHeader.contents = prepareLineFlexInnerContents('header', fbData);
   return lineFlexHeader;
 }
 
@@ -140,12 +141,12 @@ function prepareLineFlexInnerContents(option: string, fbData?: Datum): LineFlexI
     const innerContent = new LineFlexInnerContents();
     innerContent.type = 'box';
     innerContent.layout = 'horizontal';
-    innerContent.contents = prepareLineFlexInnerContents('body-2');
+    innerContent.contents = prepareLineFlexInnerContents('body-2', fbData);
     const innerContent2 = new LineFlexInnerContents();
     innerContent2.type = 'box';
     innerContent2.layout = 'baseline';
     innerContent2.margin = 'md';
-    innerContent2.contents = prepareLineFlexInnerContents('body-3');
+    innerContent2.contents = prepareLineFlexInnerContents('body-3', fbData);
     lineFlexInnerContentLists.push(innerContent);
     lineFlexInnerContentLists.push(innerContent2);
     return lineFlexInnerContentLists;
