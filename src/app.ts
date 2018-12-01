@@ -51,7 +51,8 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
     'center',
     lineLocObj.message.latitude + ',' + lineLocObj.message.longitude
   );
-
+  console.log("lineLocObj", lineLocObj);
+  console.log("href", url.href);
   request.get(url.href, (err, res, body) => {
     if (err) {
       return console.log(err);
