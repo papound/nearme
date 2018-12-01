@@ -28,7 +28,7 @@ function reply(reply_token: string, msg: any) {
     messages: [
       {
         type: 'text',
-        text: msg,
+        text: JSON.stringify(msg),
       },
     ],
   });
@@ -51,14 +51,17 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
     'center',
     lineLocObj.message.latitude + ',' + lineLocObj.message.longitude
   );
+  const headers = {
+    'charset': 'utf-8',
+  }
   console.log("lineLocObj", lineLocObj);
   console.log("href", url.href);
-  request.get(url.href, (err, res, body) => {
+  request.get({ url: url.href, headers }, (err, res, body) => {
     if (err) {
       return console.log(err);
     }
     // console.log(body);
-    reply(replyToken, body);
+    reply(replyToken, );
   });
 }
 
