@@ -35,12 +35,7 @@ function reply(reply_token: string, msg: any) {
   };
   const body = JSON.stringify({
     replyToken: reply_token,
-    messages: [
-      {
-        type: 'text',
-        text: msg,
-      },
-    ],
+    messages: [msg],
   });
   request.post(
     {
