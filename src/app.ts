@@ -84,9 +84,10 @@ function prepareLineFlexResponse(fbDataList: Datum[]): LineFlexMessage {
   responseFlex.contents = new LineFlexContentsContainer();
   responseFlex.contents.type = 'carousel';
   responseFlex.contents.contents = [];
+  fbDataList = fbDataList.slice(0, 10);
   console.log('fbDataList length: ', fbDataList.length);
   fbDataList.forEach(fbData => {
-    console.log(fbData);
+    // console.log(fbData);
     const mainContents = prepareLineFlexContents(fbData);
     responseFlex.contents.contents.push(mainContents);
   });
