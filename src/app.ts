@@ -55,7 +55,7 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
     if (err) {
       return console.log(err);
     }
-    // console.log(body);
+    console.log(body);
     reply(replyToken, body);
   });
 }
