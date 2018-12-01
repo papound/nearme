@@ -71,7 +71,7 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
     // reply(replyToken, res.body.data[0]);
     let lineFlexResponse = new LineFlexMessage();
     lineFlexResponse = prepareLineFlexResponse(message.data);
-    console.log('lineFlexResponse', JSON.stringify(lineFlexResponse));
+    // console.log('lineFlexResponse', JSON.stringify(lineFlexResponse));
     reply(replyToken, lineFlexResponse);
   });
 }
@@ -84,6 +84,7 @@ function prepareLineFlexResponse(fbDataList: Datum[]): LineFlexMessage {
   responseFlex.contents = new LineFlexContentsContainer();
   responseFlex.contents.type = 'carousel';
   responseFlex.contents.contents = [];
+  console.log('fbDataList length: ', fbDataList.length);
   fbDataList.forEach(fbData => {
     console.log(fbData);
     const mainContents = prepareLineFlexContents(fbData);
