@@ -72,10 +72,11 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
       return console.log(err);
     }
     const message = JSON.parse(res.body);
-    console.log(message.data[0]);
+    // console.log(message.data[0]);
     // reply(replyToken, res.body.data[0]);
     let lineFlexResponse = new LineFlexMessage();
     lineFlexResponse = prepareLineFlexResponse(message.data);
+    console.log('lineFlexResponse', lineFlexResponse);
     reply(replyToken, lineFlexResponse);
   });
 }
