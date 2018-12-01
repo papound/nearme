@@ -60,8 +60,8 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
     if (err) {
       return console.log(err);
     }
-    // console.log(body);
-    reply(replyToken, JSON.stringify(body));
+    console.log(res.body);
+    reply(replyToken, "test");
   });
 }
 
