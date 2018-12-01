@@ -76,7 +76,7 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
     // reply(replyToken, res.body.data[0]);
     let lineFlexResponse = new LineFlexMessage();
     lineFlexResponse = prepareLineFlexResponse(message.data);
-    console.log('lineFlexResponse', lineFlexResponse);
+    console.log('lineFlexResponse', JSON.stringify(lineFlexResponse));
     reply(replyToken, lineFlexResponse);
   });
 }
