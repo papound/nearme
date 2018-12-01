@@ -33,9 +33,11 @@ function reply(reply_token: string, msg: any) {
     Authorization:
       'Bearer {GINGZn/65Zcp4HdxRQluDqnKV1GAr5tmwp+NVLvDKhxPwyicHVv7pbbIN3M32hBN7bjF6yFxovLFQIKdT525tfcVzJYsynpxwKg3DEY5Gxze25PG3TQDvD/trnHEVCSKug7dtmMK7Hrj84E2tSVvpAdB04t89/1O/w1cDnyilFU=}',
   };
+  const msgArray = [];
+  msgArray.push(msg);
   const body = JSON.stringify({
     replyToken: reply_token,
-    messages: [msg],
+    messages: msgArray,
   });
   request.post(
     {
@@ -44,7 +46,7 @@ function reply(reply_token: string, msg: any) {
       body,
     },
     (err, res, body) => {
-      console.log('status = ' + res.statusCode);
+      console.log('status = ' + res.statusCode, err);
     }
   );
 }
@@ -116,8 +118,11 @@ function prepareLineFlexHeader(fbData: Datum): LineFlexHeader {
 function prepareLineFlexHero(fbData: Datum): LineFlexHero {
   const lineFlexHero = new LineFlexHero();
   lineFlexHero.type = 'image';
-  lineFlexHero.url = 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png';
-  lineFlexHero.size = 'full';
+  lineFlexHero.url =
+    fbData && fbData.picture
+      ? fbData.picture.data.url
+      : 'https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png';
+  lineFlexHero.size = 'xxl';
   lineFlexHero.aspectRatio = '20:13';
   lineFlexHero.aspectMode = 'cover';
   lineFlexHero.action = prepareLineFlexAction('hero', fbData);
@@ -157,7 +162,8 @@ function prepareLineFlexInnerContents(option: string, fbData?: Datum): LineFlexI
     body2Content1.size = 'md';
     body2Content1.weight = 'bold';
     body2Content2.type = 'text';
-    body2Content2.text = 'Text ';
+    const catStr = fbData.category_list.map(c => c.name).join(', ');
+    body2Content2.text = fbData && fbData.category_list.length > 0 ? catStr : 'Text';
     body2Content2.size = 'md';
     body2Content2.align = 'start';
     body2Content2.wrap = true;
@@ -167,7 +173,7 @@ function prepareLineFlexInnerContents(option: string, fbData?: Datum): LineFlexI
   } else if (option === 'body-3') {
     const ratings = [];
     const score: number = Math.round(fbData.overall_star_rating);
-    for (let index = 1; index <= 5; index++) {
+    for (let index = 0; index < 5; index++) {
       if (fbData) {
         const rating = prepareRatings(index <= score ? '1' : '0');
         ratings.push(rating);
@@ -175,10 +181,13 @@ function prepareLineFlexInnerContents(option: string, fbData?: Datum): LineFlexI
     }
     const additionalData = new LineFlexInnerContents();
     additionalData.type = 'text';
-    additionalData.text = '4.0';
+    additionalData.text =
+      fbData && fbData.overall_star_rating != null
+        ? fbData.overall_star_rating.toString()
+        : 'Not Rated';
     additionalData.flex = 0;
     additionalData.margin = 'md';
-    additionalData.type = 'sm';
+    additionalData.size = 'sm';
     additionalData.color = '#999999';
     ratings.push(additionalData);
     return ratings;
@@ -213,20 +222,20 @@ function prepareLineFlexAction(option: string, fbData: Datum): LineFlexAction {
   if (option === 'hero') {
     const lineFlexAction = new LineFlexAction();
     lineFlexAction.type = 'uri';
-    lineFlexAction.type = 'Line';
-    lineFlexAction.type = 'https://linecorp.com/';
+    lineFlexAction.label = 'Line';
+    lineFlexAction.uri = fbData && fbData.link ? fbData.link : 'https://linecorp.com/';
     return lineFlexAction;
   } else if (option === 'footer') {
     const lineFlexAction = new LineFlexAction();
     lineFlexAction.type = 'uri';
-    lineFlexAction.type = 'Line';
-    lineFlexAction.type = fbData && fbData.link !== '' ? fbData.link : 'https://linecorp.com/';
+    lineFlexAction.label = 'Visit Page';
+    lineFlexAction.uri = fbData && fbData.link !== '' ? fbData.link : 'https://linecorp.com/';
     return lineFlexAction;
   } else {
     const lineFlexAction = new LineFlexAction();
     lineFlexAction.type = 'uri';
-    lineFlexAction.type = 'Line';
-    lineFlexAction.type = 'https://linecorp.com/';
+    lineFlexAction.label = 'Line';
+    lineFlexAction.uri = 'https://linecorp.com/';
     return lineFlexAction;
   }
 }
