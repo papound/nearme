@@ -64,18 +64,26 @@ function getNearbyFacebookEvents(replyToken: string, lineLocObj: LineLocationBod
   };
   console.log('lineLocObj', lineLocObj);
   console.log('href', url.href);
-  request.get({ url: url.href, headers }, (err, res, body) => {
-    if (err) {
-      return console.log(err);
-    }
-    const message = JSON.parse(res.body);
-    // console.log(message.data[0]);
-    // reply(replyToken, res.body.data[0]);
-    let lineFlexResponse = new LineFlexMessage();
-    lineFlexResponse = prepareLineFlexResponse(message.data);
-    console.log('lineFlexResponse', JSON.stringify(lineFlexResponse));
-    reply(replyToken, lineFlexResponse);
-  });
+  if (
+    typeof lineLocObj.message.latitude !== 'undefined' &&
+    typeof lineLocObj.message.longitude !== 'undefined'
+  ) {
+    request.get({ url: url.href, headers }, (err, res, body) => {
+      if (err) {
+        return console.log(err);
+      }
+      const message = JSON.parse(res.body);
+      // console.log(message.data[0]);
+      // reply(replyToken, res.body.data[0]);
+      let lineFlexResponse = new LineFlexMessage();
+      lineFlexResponse = prepareLineFlexResponse(message.data);
+      // console.log('lineFlexResponse', JSON.stringify(lineFlexResponse));
+      reply(replyToken, lineFlexResponse);
+    });
+  } else {
+    const badResponse = createBadResponseReply(replyToken);
+    reply(replyToken, badResponse);
+  }
 }
 
 function prepareLineFlexResponse(fbDataList: Datum[]): LineFlexMessage {
@@ -86,6 +94,22 @@ function prepareLineFlexResponse(fbDataList: Datum[]): LineFlexMessage {
   responseFlex.contents = new LineFlexContentsContainer();
   responseFlex.contents.type = 'carousel';
   responseFlex.contents.contents = [];
+  fbDataList.sort((a, b) => {
+    if (typeof a.overall_star_rating === 'undefined') {
+      a.overall_star_rating = 0;
+    }
+    if (typeof b.overall_star_rating === 'undefined') {
+      b.overall_star_rating = 0;
+    }
+    // console.log('compare a: ' + a.overall_star_rating + ' and b: ' + b.overall_star_rating);
+    if (a.overall_star_rating < b.overall_star_rating) {
+      return 1;
+    }
+    if (a.overall_star_rating > b.overall_star_rating) {
+      return -1;
+    }
+    return 0;
+  });
   fbDataList = fbDataList.slice(0, 10);
   console.log('fbDataList length: ', fbDataList.length);
   fbDataList.forEach(fbData => {
@@ -175,7 +199,12 @@ function prepareLineFlexInnerContents(option: string, fbData?: Datum): LineFlexI
     const score: number = Math.round(fbData.overall_star_rating);
     for (let index = 0; index < 5; index++) {
       if (fbData) {
-        const rating = prepareRatings(index <= score ? '1' : '0');
+        let rating: LineFlexInnerContents = null;
+        if (score === 0) {
+          rating = prepareRatings('0');
+        } else {
+          rating = prepareRatings(index <= score ? '1' : '0');
+        }
         ratings.push(rating);
       }
     }
@@ -229,7 +258,7 @@ function prepareLineFlexAction(option: string, fbData: Datum): LineFlexAction {
     const lineFlexAction = new LineFlexAction();
     lineFlexAction.type = 'uri';
     lineFlexAction.label = 'Visit Page';
-    lineFlexAction.uri = fbData && fbData.link !== '' ? fbData.link : 'https://linecorp.com/';
+    lineFlexAction.uri = fbData && fbData.link ? fbData.link : 'https://linecorp.com/';
     return lineFlexAction;
   } else {
     const lineFlexAction = new LineFlexAction();
@@ -256,6 +285,13 @@ function prepareLineFlexFooter(fbData: Datum): LineFlexFooter {
   lineFlexFooter.spacing = 'sm';
   lineFlexFooter.contents = prepareLineFlexInnerContents('footer', fbData);
   return lineFlexFooter;
+}
+
+function createBadResponseReply(replyToken: string) {
+  return {
+    type: 'text',
+    text: 'Please share your location 😓',
+  };
 }
 
 export default app;
